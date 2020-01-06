@@ -1,9 +1,18 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, StatusBar, TouchableOpacity, Image } from 'react-native';
+import { RadioButton, Appbar } from 'react-native-paper';
 
 import Frequency from './Components/utils/selection'
 
 export default class App extends React.Component {
+
+   constructor(props) {
+      super(props)
+   }
+
+   state = {
+      checked: Frequency.Daily,
+   };
 
    buttonPressed() {
       var atta = Frequency.Daily
@@ -15,11 +24,25 @@ export default class App extends React.Component {
    }
 
    render() {
+      const { checked } = this.state;
+
       return (
 
          <View style={styles.container}>
             <StatusBar hidden />
 
+            {/* TOP APPBAR */}
+            <Appbar.Header style={styles.appBar}>
+               <Appbar.BackAction
+                  onPress={this._goBack}
+               />
+               <Appbar.Content
+                  title="Habits"
+               />
+               <Appbar.Action icon="magnify" onPress={this._handleSearch} />
+            </Appbar.Header>
+
+            {/* INPUT TEXT */}
             <TextInput
                style={styles.input}
                underlineColorAndroid="transparent"
@@ -29,6 +52,35 @@ export default class App extends React.Component {
                onChangeText={this.handleHabit}
             />
 
+            {/* RADIO BUTTON SELECTION */}
+            <View style={{ alignSelf: 'stretch' }}>
+
+               <View style={styles.radio}>
+                  <RadioButton
+                     color="white"
+                     value="first"
+                     status={checked === 'first' ? 'checked' : 'unchecked'}
+                     onPress={() => { this.setState({ checked: 'first' }); }}
+                  />
+                  <Text>
+                     First
+                  </Text>
+               </View>
+               <View style={styles.radio}>
+                  <RadioButton
+                     color="white"
+                     value="second"
+                     status={checked === 'second' ? 'checked' : 'unchecked'}
+                     onPress={() => { this.setState({ checked: 'second' }); }}
+                  />
+                  <Text>
+                     Second
+                  </Text>
+               </View>
+
+            </View>
+
+            {/* ADD BUTTON */}
             <TouchableOpacity activeOpacity={.8} style={styles.fullWidthButton} onPress={this.buttonPressed}>
                <Text style={styles.fullWidthButtonText}>+</Text>
             </TouchableOpacity>
@@ -40,11 +92,21 @@ export default class App extends React.Component {
 }
 
 const styles = StyleSheet.create({
+   appBar: {
+      alignSelf: 'stretch',
+      width: "100%",
+      height: 70,
+   },
+   radio: {
+      paddingLeft: 20,
+      alignSelf: 'stretch',
+      flexDirection: 'row',
+      alignItems: "center",
+   },
    container: {
       flex: 1,
       backgroundColor: '#CBCCBE',
       alignItems: 'center',
-      justifyContent: 'space-between',
    },
    input: {
       margin: 15,
@@ -64,6 +126,10 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: "center",
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
    },
    fullWidthButtonText: {
       fontSize: 24,
