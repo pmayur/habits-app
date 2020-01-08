@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Text, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, View, TouchableOpacityBase } from 'react-native';
 
 export default class Habits extends React.Component {
   constructor(props) {
@@ -7,48 +7,54 @@ export default class Habits extends React.Component {
   }
 
   addCompleted = () => {
-    var markComplete = this.props.habit.repetitionsCompleted + 1
-    this.props.callBackFunc(markComplete);
+    var updatedRepetitions = this.props.habit.repetitionsCompleted + 1
+    this.props.updateRepetitionsCompleted(updatedRepetitions);
+  }
+
+  decreaseCompleted = () => {
+    var updatedRepetitions = this.props.habit.repetitionsCompleted - 1
+    this.props.updateRepetitionsCompleted(updatedRepetitions);
   }
 
   render() {
-    const rows = [...Array(this.props.habit.repetitionsCompleted)].map(
-      function (item, key) {
-        return <View style={styles.singleItem}></View>
-      }
-    )
+    const completion = `${this.props.habit.repetitionsCompleted / this.props.habit.repetitions * 100}%`
 
     return (
-      <View style={{ alignSelf: 'stretch' }}>
-        <Text style={{ margin: 5 }}>
-          {this.props.habit.title}
-        </Text>
-        <TouchableOpacity onPress={this.addCompleted}>
-          <View style={styles.completion}>
-            {
-              rows
-            }
-          </View>
-        </TouchableOpacity>
+      <View style={styles.container}>
+        <View style={[styles.completionBar, {width: completion}]}>
+        </View>
+        <View style={{ width: "100%", backgroundColor: 'transparent', height: '100%', position: "absolute", flexDirection: 'row'}}>
+          <TouchableOpacity style={{ width: '50%', height: '100%'}} onPress={this.decreaseCompleted}></TouchableOpacity>
+          <TouchableOpacity style={{ width: '50%', height: '100%'}} onPress={this.addCompleted}></TouchableOpacity>
+        </View>
+        <View style={styles.text} pointerEvents="none">
+          <Text>
+            {this.props.habit.title}
+          </Text>
+        </View>
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  singleItem: {
-    borderRadius: 2,
-    height: 48,
-    width: 48,
-    marginRight: 1,
-    backgroundColor: '#33B021'
+  container: {
+    marginLeft: 8,
+    marginRight: 8,
+    marginBottom: 10,
+    height: 60,
+    borderRadius: 10,
+    alignSelf: "stretch",
+    backgroundColor: '#FFF',
+    overflow: "hidden",
+    justifyContent: "center"
   },
-  completion: {
-    padding: 1,
-    height: 50,
-    width: '100%',
-    backgroundColor: "#FFF",
-    flexDirection: 'row',
-    alignItems: "center",
+  text: {
+    position: "absolute",
+    marginLeft: 40,
   },
+  completionBar: {
+    backgroundColor: '#378F36',
+    height: '100%',
+  }
 })
