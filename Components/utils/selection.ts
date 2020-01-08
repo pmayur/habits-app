@@ -5,4 +5,12 @@ enum Frequency {
   Yearly = "Yearly"
 }
 
-export default Frequency
+enum HabitsPage {
+  AddHabit,
+  DisplayHabits
+}
+
+export {
+  Frequency,
+  HabitsPage
+}

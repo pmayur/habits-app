@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, StatusBar, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TextInput, StatusBar, TouchableOpacity } from 'react-native';
 import { RadioButton, Appbar } from 'react-native-paper';
+import { HabitsPage, Frequency } from "./Components/utils/selection";
 
-import Frequency from './Components/utils/selection'
+import Habit from './Components/Habit';
 
 export default class App extends React.Component {
 
@@ -11,20 +12,148 @@ export default class App extends React.Component {
    }
 
    state = {
-      checked: Frequency.Daily,
+      /* collection of all the habits */
+      habits: [],
+
+      /* attributes of a single habit */
+      title: "",
+      frequency: Frequency.Daily,
+      repetitions: 0,
+      repetitionsCompleted: 0,
+
+      /* to control view of display/add habits */
+      viewHabits: HabitsPage.DisplayHabits,
    };
 
-   buttonPressed() {
-      var atta = Frequency.Daily
-      console.log(atta)
+   AddButtonPressed = () => {
+      if (this.state.viewHabits == HabitsPage.DisplayHabits) {
+         this.setState({
+            viewHabits: HabitsPage.AddHabit
+         })
+      } else if (this.state.title.length > 0) {
+
+         var tempHabits = this.state.habits
+         tempHabits.push({
+            title: this.state.title,
+            frequency: this.state.frequency,
+            repetitions: this.state.repetitions,
+            repetitionsCompleted: this.state.repetitionsCompleted
+         })
+         this.setState({
+            habits: tempHabits,
+            title: "",
+            frequency: Frequency.Daily,
+            repetitions: 0,
+            repetitionsCompleted: 0,
+            viewHabits: HabitsPage.DisplayHabits
+         })
+
+      }
    }
 
-   handleHabit(e) {
-      console.log(e)
+   handleHabitTitleChange = (e) => {
+      this.setState({
+         title: e
+      })
+   }
+
+   _goBack = () => {
+      this.setState({
+         viewHabits: HabitsPage.DisplayHabits
+      })
    }
 
    render() {
+      onTimesCompletedChange = (key, completedTimes) => {
+         var tempHabits = this.state.habits
+         tempHabits[key]["repetitionsCompleted"] = completedTimes
+         this.setState({
+            habits: tempHabits
+         })
+      }
+
       const { checked } = this.state;
+      const habits = this.state.habits.map(
+         function (item, key) {
+            return <Habit
+               habit={item}
+               callBackFunc={(data) => {
+                  onTimesCompletedChange(key, data)
+               }}
+            />
+         }
+      )
+
+      const displayAddHabit =
+         <View>
+            {/* INPUT TEXT */}
+            <TextInput
+               style={styles.input}
+               value={this.state.habitTitle}
+               underlineColorAndroid="transparent"
+               placeholder="Add Habit.."
+               placeholderTextColor="#979681"
+               autoCapitalize="none"
+               onChangeText={this.handleHabitTitleChange}
+            />
+
+            {/* RADIO BUTTON SELECTION */}
+            <View>
+
+               <View style={styles.radio}>
+                  <RadioButton
+                     color="white"
+                     value={Frequency.Daily}
+                     status={checked == Frequency.Daily ? 'checked' : 'unchecked'}
+                     onPress={() => { this.setState({ checked: Frequency.Daily }); }}
+                  />
+                  <Text>
+                     {Frequency.Daily}
+                  </Text>
+               </View>
+               <View style={styles.radio}>
+                  <RadioButton
+                     color="white"
+                     value={Frequency.Weekly}
+                     status={checked == Frequency.Weekly ? 'checked' : 'unchecked'}
+                     onPress={() => { this.setState({ checked: Frequency.Weekly }); }}
+                  />
+                  <Text>
+                     {Frequency.Weekly}
+                  </Text>
+               </View>
+               <View style={styles.radio}>
+                  <RadioButton
+                     color="white"
+                     value={Frequency.Monthly}
+                     status={checked === Frequency.Monthly ? 'checked' : 'unchecked'}
+                     onPress={() => { this.setState({ checked: Frequency.Monthly }); }}
+                  />
+                  <Text>
+                     {Frequency.Monthly}
+                  </Text>
+               </View>
+               <View style={styles.radio}>
+                  <RadioButton
+                     color="white"
+                     value={Frequency.Yearly}
+                     status={checked === Frequency.Yearly ? 'checked' : 'unchecked'}
+                     onPress={() => { this.setState({ checked: Frequency.Yearly }); }}
+                  />
+                  <Text>
+                     {Frequency.Yearly}
+                  </Text>
+               </View>
+
+            </View>
+         </View>
+
+      const displayHabits =
+         <View>
+            {
+               habits
+            }
+         </View>
 
       return (
 
@@ -39,54 +168,20 @@ export default class App extends React.Component {
                <Appbar.Content
                   title="Habits"
                />
-               <Appbar.Action icon="magnify" onPress={this._handleSearch} />
             </Appbar.Header>
 
-            {/* INPUT TEXT */}
-            <TextInput
-               style={styles.input}
-               underlineColorAndroid="transparent"
-               placeholder="Add Habit.."
-               placeholderTextColor="#979681"
-               autoCapitalize="none"
-               onChangeText={this.handleHabit}
-            />
-
-            {/* RADIO BUTTON SELECTION */}
+            {/* CENTER ELEMENT */}
             <View style={{ alignSelf: 'stretch' }}>
-
-               <View style={styles.radio}>
-                  <RadioButton
-                     color="white"
-                     value="first"
-                     status={checked === 'first' ? 'checked' : 'unchecked'}
-                     onPress={() => { this.setState({ checked: 'first' }); }}
-                  />
-                  <Text>
-                     First
-                  </Text>
-               </View>
-               <View style={styles.radio}>
-                  <RadioButton
-                     color="white"
-                     value="second"
-                     status={checked === 'second' ? 'checked' : 'unchecked'}
-                     onPress={() => { this.setState({ checked: 'second' }); }}
-                  />
-                  <Text>
-                     Second
-                  </Text>
-               </View>
-
+               {this.state.viewHabits == HabitsPage.DisplayHabits ? displayHabits : displayAddHabit}
             </View>
 
+
             {/* ADD BUTTON */}
-            <TouchableOpacity activeOpacity={.8} style={styles.fullWidthButton} onPress={this.buttonPressed}>
+            <TouchableOpacity activeOpacity={.8} style={styles.fullWidthButton} onPress={this.AddButtonPressed}>
                <Text style={styles.fullWidthButtonText}>+</Text>
             </TouchableOpacity>
 
          </View>
-
       );
    }
 }
