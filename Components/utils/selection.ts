@@ -1,8 +1,8 @@
 enum Frequency {
-  Daily = "Daily",
-  Weekly = "Weekly",
-  Monthly = "Monthly",
-  Yearly = "Yearly"
+  Day = "Day",
+  Week = "Week",
+  Month = "Month",
+  Year = "Year"
 }
 
 enum HabitsPage {

@@ -39,7 +39,6 @@ export default class Habits extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginLeft: 8,
     marginRight: 8,
     marginBottom: 10,
     height: 60,
@@ -51,7 +50,7 @@ const styles = StyleSheet.create({
   },
   text: {
     position: "absolute",
-    marginLeft: 40,
+    marginLeft: 30,
   },
   completionBar: {
     backgroundColor: '#378F36',
